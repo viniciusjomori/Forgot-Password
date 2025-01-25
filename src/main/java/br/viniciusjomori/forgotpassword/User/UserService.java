@@ -8,6 +8,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import br.viniciusjomori.forgotpassword.App.Exception.BadRequestException;
+import br.viniciusjomori.forgotpassword.App.Exception.NotFoundException;
+import br.viniciusjomori.forgotpassword.ForgotPassword.ForgotPasswordEntity;
 import br.viniciusjomori.forgotpassword.Security.Util.PasswordUtil;
 import br.viniciusjomori.forgotpassword.User.DTO.UserRegisterDTO;
 import br.viniciusjomori.forgotpassword.User.Strategy.IUserValidation;
@@ -45,6 +47,33 @@ public class UserService {
 
         return repository.save(entity);
 
+    }
+
+    public UserEntity findByEmail(String email) {
+        return repository.findByEmail(email)
+            .orElseThrow(() -> new NotFoundException(email + "not found"));
+    }
+
+    public UserEntity updatePassword(ForgotPasswordEntity request, String password) {
+        String errorMessage = null;
+        UserEntity user = request.getUser();
+        
+        if (!request.getActive())
+            errorMessage = "Reset password request is not active";
+        else if(!passwordUtil.isValid(password)) {
+            errorMessage = "Weak password";
+        }
+        else if(passwordUtil.matches(password, user))
+            errorMessage = "New password can't be the current password";
+
+        if (errorMessage != null) {
+            throw new BadRequestException(errorMessage);
+        }
+
+        String hash = passwordUtil.encode(password);
+        user.setPassword(hash);
+
+        return repository.save(user);
     }
 
     private void validateUser(UserEntity user) {
