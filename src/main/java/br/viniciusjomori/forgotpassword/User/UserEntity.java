@@ -3,7 +3,6 @@ package br.viniciusjomori.forgotpassword.User;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -39,7 +38,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
     }
     
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public Collection<SimpleGrantedAuthority> getAuthorities() {
         return Arrays.asList(new SimpleGrantedAuthority("USER_ROLE"));
     }
 }
