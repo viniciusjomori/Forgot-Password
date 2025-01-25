@@ -1,4 +1,4 @@
-package br.viniciusjomori.forgotpassword.ForgotPassword;
+package br.viniciusjomori.forgotpassword.ForgotPassword.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.viniciusjomori.forgotpassword.App.ResponseDTO;
+import br.viniciusjomori.forgotpassword.ForgotPassword.ForgotPasswordService;
 import br.viniciusjomori.forgotpassword.ForgotPassword.DTO.NewPasswordDTO;
 import jakarta.websocket.server.PathParam;
 
