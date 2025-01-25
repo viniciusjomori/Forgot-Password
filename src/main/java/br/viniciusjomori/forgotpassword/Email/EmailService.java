@@ -4,10 +4,12 @@ import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 
 @Service
 public class EmailService {
@@ -33,22 +35,23 @@ public class EmailService {
         try {
             sendEmail(entity);
             entity.setStatus(EmailStatus.SENT);
-        } catch (MailException me) {
+        } catch (MessagingException me) {
             entity.setStatus(EmailStatus.ERROR);
         } 
         
         return repository.save(entity);
     }
 
-    private void sendEmail(EmailEntity entity) {
-
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(entity.getFromAddress());
-        message.setTo(entity.getToAddress());
-        message.setSubject(entity.getSubject());
-        message.setText(entity.getContent());
+    private void sendEmail(EmailEntity entity) throws MessagingException {
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        
+        helper.setFrom(entity.getFromAddress());
+        helper.setTo(entity.getToAddress());
+        helper.setSubject(entity.getSubject());
+        helper.setText(entity.getContent(), true); // 'true' para conteúdo em HTML
+        
         javaMailSender.send(message);
-
     }
 
 }

@@ -53,7 +53,14 @@ public class ForgotPasswordService {
     private void sendEmail(ForgotPasswordEntity entity) {
         String addressTo = entity.getUser().getEmail();
         String subject = "Reset Password";
-        String content = "formulario";
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append("<h2>Reset de Senha</h2>");
+        sb.append(String.format(
+            "<p>http://localhost:8080/forgot-password/%s</p>",
+            entity.getId()
+        ));
+        String content = sb.toString();
 
         emailService.sendEmail(addressTo, subject, content);
     }
