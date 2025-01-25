@@ -1,6 +1,7 @@
 package br.viniciusjomori.forgotpassword.ForgotPassword;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,8 @@ public class ForgotPasswordService {
     public ForgotPasswordEntity forgotPassword(String email) {
         UserEntity user = userService.findByEmail(email);
 
+        desactiveRequests(user);
+
         ForgotPasswordEntity entity = ForgotPasswordEntity.builder()
             .user(user)
             .expirationDate(LocalDateTime.now().minusHours(1))
@@ -43,6 +46,14 @@ public class ForgotPasswordService {
 
         entity.setActive(false);
         repository.save(entity);
+    }
+
+    private void desactiveRequests(UserEntity user) {
+        Collection<ForgotPasswordEntity> requests = repository.findActiveByUser(user);
+        for (ForgotPasswordEntity request : requests) {
+            request.setActive(false);
+        }
+        repository.saveAll(requests);
     }
 
     private ForgotPasswordEntity findById(long id) {
