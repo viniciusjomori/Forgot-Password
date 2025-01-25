@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,6 +26,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ResponseDTO> handleResponseStatusException(AccessDeniedException ex) {
         responseDto.setMessage("You are not authorized to do this");
+        responseDto.setHttpStatus(HttpStatus.FORBIDDEN);
+        return new ResponseEntity<ResponseDTO>(responseDto, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ResponseDTO> handleResponseStatusException(BadCredentialsException ex) {
+        responseDto.setMessage("Wrong password");
         responseDto.setHttpStatus(HttpStatus.FORBIDDEN);
         return new ResponseEntity<ResponseDTO>(responseDto, HttpStatus.FORBIDDEN);
     }
