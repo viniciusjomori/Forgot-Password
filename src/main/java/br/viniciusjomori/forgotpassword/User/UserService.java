@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import br.viniciusjomori.forgotpassword.App.Exception.BadRequestException;
@@ -25,6 +26,15 @@ public class UserService {
 
     @Autowired
     private List<IUserValidation> validations;
+
+    public UserEntity getMyUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal instanceof UserEntity) {
+            long id = ((UserEntity) principal).getId();
+            return repository.findById(id).get();
+        }
+        else return null;
+    }
 
     public UserEntity registerUser(UserRegisterDTO dto) {
         UserEntity entity = mapper.toEntity(dto);

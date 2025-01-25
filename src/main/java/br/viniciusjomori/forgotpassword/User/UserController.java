@@ -2,7 +2,9 @@ package br.viniciusjomori.forgotpassword.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +28,14 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> registerUser(@RequestBody UserRegisterDTO register) {
         UserEntity entity = service.registerUser(register);
         UserResponseDTO response = mapper.toResponse(entity);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("my")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<UserResponseDTO> getMyUser(){
+        UserEntity user = service.getMyUser();
+        UserResponseDTO response = mapper.toResponse(user);
         return ResponseEntity.ok(response);
     }
     
